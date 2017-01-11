@@ -24,16 +24,19 @@ import javax.swing.event.ChangeListener;
 public class Shapes implements GLEventListener, ChangeListener 
 {
 	GLCanvas glcanvas;
+	// Panel that will hold our check boxes
 	JPanel checkBoxPanel;
+	// Dimensions of canvas
 	int canvasWidth = 600;
 	int canvasHeight = 500;
-	
+	// Booleans to indicate whether check boxes have been clicked
 	boolean showRectangle = false;
 	boolean showSquare = false;
 	boolean showCircle = false;
 
 	@Override
-	public void stateChanged(ChangeEvent e) {
+	public void stateChanged(ChangeEvent e) 
+	{
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 		glcanvas.repaint();
@@ -41,9 +44,10 @@ public class Shapes implements GLEventListener, ChangeListener
 	}
 
 	@Override
-	public void display(GLAutoDrawable drawable) {
+	public void display(GLAutoDrawable drawable)
+	{
 		// TODO Auto-generated method stub
-		// Use booleans!!!
+		// Variables to 
 		int shapeWidth = (canvasWidth / 3) - 25;
 		int shapeHeight = 100;
 		int shapeTopCoord = 100;
@@ -55,36 +59,23 @@ public class Shapes implements GLEventListener, ChangeListener
 		
 		if(showRectangle == true)
 		{
-			// drawing the triangle
-			// Vertices for rectangle
-			// Top left
-			int rectVertex1x = 0;
-			int rectVertex1y = shapeTopCoord;
-			// Top right
-			int rectVertex2x = rectVertex1x + shapeWidth;
-			int rectVertex2y = shapeTopCoord;
-			// Bottom left
-			int rectVertex3x = 0;
-			int rectVertex3y = shapeTopCoord + shapeHeight;
-			// Bottom right
-			int rectVertex4x = rectVertex2x;
-			int rectVertex4y = rectVertex3y;
-			
-			
+			float centerX = -0.75f;
+			float centerY = 0.0f;
+			float w = 0.15f;
+			float h = 0.3f;
 			
 			gl.glBegin(GL2.GL_QUADS);
 			gl.glColor3d(1.0, 0.0, 0.0);
-			//gl.glVertex3i(rectVertex1x, rectVertex1y, 0);	// Top left vertex
-			gl.glVertex3i(0, 0, 0);
-			gl.glColor3d(0.0, 0.0, 1.0);
-			//gl.glVertex3i(rectVertex3x, rectVertex3y, 0);	// Bottom left
-			gl.glVertex3i(0, 100, 0);
-			gl.glColor3d(1.0, 0.0, 1.0);
-			//gl.glVertex3i(rectVertex4x, rectVertex4y, 0);	// Bottom right
-			gl.glVertex3i(200, 100, 0);
+			gl.glVertex3f(-w + centerX, h + centerY, 0.0f);
+			
 			gl.glColor3d(0.0, 1.0, 0.0);
-			//gl.glVertex3i(rectVertex2x, rectVertex2y, 0);	// Top right vertex
-			gl.glVertex3i(200, 0, 0);
+			gl.glVertex3f( -w + centerX,  -h + centerY,  0.0f);
+			
+			gl.glColor3d(0.0, 0.0, 1.0);
+			gl.glVertex3f(w + centerX, -h + centerY,  0.0f);
+			
+			gl.glColor3d(1.0, 1.0, 0.0);
+			gl.glVertex3f(w + centerX, h + centerY,  0.0f);
 
 
 			gl.glEnd();
@@ -94,19 +85,82 @@ public class Shapes implements GLEventListener, ChangeListener
 		if(showSquare == true)
 		{
 			// drawing the triangle
-			gl.glBegin(GL2.GL_TRIANGLES);
+//			gl.glBegin(GL2.GL_TRIANGLES);
+//			gl.glColor3d(1.0, 0.0, 0.0);
+//			gl.glVertex3f(-0.50f, -0.50f, 0);
+//			gl.glColor3d(0.0, 1.0, 0.0);
+//			gl.glVertex3f(0.50f, -0.50f, 0);
+//			gl.glColor3d(0.0, 0.0, 1.0);
+//			gl.glVertex3f(0f, 0.50f, 0);
+//			gl.glEnd();
+			
+			// Creates diamond
+//			gl.glBegin(GL2.GL_POINTS);
+//			gl.glVertex3f(0.5f, 0.0f, 0.0f); // right most point
+//			gl.glVertex3f( 0.0f,  0.5f,  0.0f); // Upper point
+//			gl.glVertex3f(0.0f, -0.5f,  0.0f); // Bottom pt
+//			gl.glVertex3f(-0.5f, -0.0f,  0.0f); // Left pt
+//			// End, don't comment next line!!!!!!!!
+//			gl.glEnd();
+			
+			gl.glBegin(GL2.GL_QUADS);
 			gl.glColor3d(1.0, 0.0, 0.0);
-			gl.glVertex3f(-0.50f, -0.50f, 0);
+			gl.glVertex3f(-.25f, .25f, 0.0f); // right most point
+			
 			gl.glColor3d(0.0, 1.0, 0.0);
-			gl.glVertex3f(0.50f, -0.50f, 0);
+			gl.glVertex3f( -.25f,  -.25f,  0.0f); // Upper point
+			
 			gl.glColor3d(0.0, 0.0, 1.0);
-			gl.glVertex3f(0f, 0.50f, 0);
+			gl.glVertex3f(.25f, -.25f,  0.0f); // Bottom pt
+			
+			gl.glColor3d(1.0, 1.0, 0.0);
+			gl.glVertex3f(.25f, .25f,  0.0f); // Left pt
+			// End, don't comment next line!!!!!!!!
 			gl.glEnd();
+			
+			int coordX = 10;
+			int coordY = 10;
+			
 		}
 		
 		if(showCircle == true)
 		{
 			
+			int triangles = 36;
+			float radius = (float).3;
+			float xCenter = (float)0.7;
+			float yCenter = (float)0.0;
+			float x, y;
+			
+			gl.glBegin(GL2.GL_TRIANGLE_FAN);
+			gl.glVertex2f(xCenter, yCenter);
+			for(int i =0; i <= triangles; i++)
+			{
+				float angle = (float) (2 * Math.PI * i / triangles);
+				x = xCenter + radius * ((float)Math.cos(angle));
+				y = yCenter + radius * (float)Math.sin(angle);
+				gl.glVertex2f(x,y);
+				
+				// Coloring
+				if(i%6 == 0)
+			        gl.glColor3f(1.0f, 0.0f, 0.0f);
+
+			    if (i%6 == 1)
+			        gl.glColor3f(1.0f, 0.5f, 0.0f);
+
+			    if (i%6 == 2)
+			    	gl.glColor3f(1.0f, 1.0f, 0.0f);
+
+			    if (i%6 == 3)
+			    	gl.glColor3f(0.0f, 1.0f, 0.0f);
+
+			    if (i%6 == 4)
+			    	gl.glColor3f(0.0f, 0.0f, 1.0f);
+
+			    if (i%6 == 5)
+			    	gl.glColor3f(1.0f, 0.0f, 1.0f);
+			}
+			gl.glEnd(); 
 		}
 		gl.glFlush();
 		gl.glPopMatrix();
@@ -118,13 +172,15 @@ public class Shapes implements GLEventListener, ChangeListener
 	}
 
 	@Override
-	public void dispose(GLAutoDrawable drawable) {
+	public void dispose(GLAutoDrawable drawable) 
+	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
+	public void init(GLAutoDrawable drawable) 
+	{
 		// TODO Auto-generated method stub
 
 	}
@@ -173,14 +229,16 @@ public class Shapes implements GLEventListener, ChangeListener
 		// Adding check box panel to bottom of frame
 		frame.add(checkBoxPanel, BorderLayout.SOUTH);
 		
-		frame.setSize(840, 480);
+		frame.setSize(600, 600);
 
 		frame.setVisible(true);
 
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+	public void reshape(GLAutoDrawable drawable, int x, int y, 
+						int width, int height) 
+	{
 		// TODO Auto-generated method stub
 
 	}

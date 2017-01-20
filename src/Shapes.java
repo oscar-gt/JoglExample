@@ -249,9 +249,9 @@ MouseListener
 		// enable us to place the shapes wherever we want
 		PlaceShapeAction placeShapeAction = new PlaceShapeAction();
 		// Buttons to place rectangle, square, circle
-		JButton placeRectangleButton = new JButton("Place Rectangle");
-		JButton placeSquareButton = new JButton("Place Square");
-		JButton placeCircleButton = new JButton("Place Circle");
+		JButton placeRectangleButton = new JButton("Set Rectangle Coord");
+		JButton placeSquareButton = new JButton("Set Square Coord");
+		JButton placeCircleButton = new JButton("Set Circle Coord");
 		// Adding buttons to new panel
 		buttonPanel.add(placeRectangleButton);
 		buttonPanel.add(placeSquareButton);
@@ -336,23 +336,20 @@ MouseListener
 			// shape. In case our user clicks different buttons
 			// before clicking a proper coordinate, the other
 			// two booleans are reset to false. 
-			if(cmd.equals("Place Rectangle"))
+			if(cmd.equals("Set Rectangle Coord"))
 			{
-				System.out.println("Place Rectangle button clicked.");
 				waitingToPlaceRectangle = true;
 				waitingToPlaceSquare = false;
 				waitingToPlaceCircle = false;
 			}
-			if(cmd.equals("Place Square"))
+			if(cmd.equals("Set Square Coord"))
 			{
-				System.out.println("Place Square button clicked.");
 				waitingToPlaceRectangle = false;
 				waitingToPlaceSquare = true;
 				waitingToPlaceCircle = false;
 			}
-			if(cmd.equals("Place Circle"))
+			if(cmd.equals("Set Circle Coord"))
 			{
-				System.out.println("Place Circle button clicked.");
 				waitingToPlaceRectangle = false;
 				waitingToPlaceSquare = false;
 				waitingToPlaceCircle = true;

@@ -20,7 +20,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 	private static String TITLE = "Multi View";
 	private static final int CANVAS_WIDTH = 640;
 	private static final int CANVAS_HEIGHT = 480;
-	private static final int FPS = 30;
+	private static final int FPS = 15;
 	private String canvasName;
 
 	int numberOfSquares = 3;
@@ -59,13 +59,17 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 
 	// Booleans to control our shapes
-	boolean moveRedSquare = false;
-	boolean moveGreenSquare = false;
-	boolean moveBlueSquare = false;
-	boolean moveRedCircle = false;
-	boolean moveBlueCircle = false;
-	boolean moveGreenCircle = false;
-	boolean moveYellowCircle = false;
+	static boolean moveRedSquare = false;
+	static boolean moveGreenSquare = false;
+	static boolean moveBlueSquare = false;
+	static boolean moveRedCircle = false;
+	static boolean moveBlueCircle = false;
+	static boolean moveGreenCircle = false;
+	static boolean moveYellowCircle = false;
+
+	static boolean animate = false;	// Controls whether we translate shape or not
+	boolean turnAround = false;
+	float translateFactor = 0.03f; // Units to move a shape in animation
 
 	static GLCanvas upperCanvas;
 
@@ -128,15 +132,76 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 				//////////	Adding radio buttons to action listener.
 				// Need the next line to be able to use action listener
-				Quad2Animated dummyInstance = new Quad2Animated("Outer");
-				RadioButtonAction radioAction = dummyInstance.new RadioButtonAction();
-				redSquare.addActionListener(radioAction);
-				greenSquare.addActionListener(radioAction);
-				blueSquare.addActionListener(radioAction);
-				redCircle.addActionListener(radioAction);
-				blueCircle.addActionListener(radioAction);
-				greenCircle.addActionListener(radioAction);
-				yellowCircle.addActionListener(radioAction);
+				//Quad2Animated dummyInstance = new Quad2Animated("Outer");
+				//RadioButtonAction radioAction = dummyInstance.new RadioButtonAction();
+				//				redSquare.addActionListener(radioAction);
+				//				greenSquare.addActionListener(radioAction);
+				//				blueSquare.addActionListener(radioAction);
+				//				redCircle.addActionListener(radioAction);
+				//				blueCircle.addActionListener(radioAction);
+				//				greenCircle.addActionListener(radioAction);
+				//				yellowCircle.addActionListener(radioAction);
+
+				///////////// ATTEMPT TO MAKE ACTION LISTENERS WORK ///////////////////////////////
+				redSquare.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						String cmd = e.getActionCommand();
+						animate = true;
+						moveRedSquare = true;
+						moveGreenSquare = false;
+						moveBlueSquare = false;
+						moveRedCircle = false;
+						moveBlueCircle = false;
+						moveGreenCircle = false;
+						moveYellowCircle = false;
+						System.out.println(cmd + " radio button pressed!!");
+
+					}
+
+				});
+				
+				blueSquare.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						String cmd = e.getActionCommand();
+						animate = true;
+						moveRedSquare = false;
+						moveGreenSquare = false;
+						moveBlueSquare = true;
+						moveRedCircle = false;
+						moveBlueCircle = false;
+						moveGreenCircle = false;
+						moveYellowCircle = false;
+						System.out.println(cmd + " radio button pressed!!");
+
+					}
+
+				});
+				
+				greenSquare.addActionListener(new ActionListener()
+				{
+					public void actionPerformed(ActionEvent e)
+					{
+						String cmd = e.getActionCommand();
+						animate = true;
+						moveRedSquare = false;
+						moveGreenSquare = true;
+						moveBlueSquare = false;
+						moveRedCircle = false;
+						moveBlueCircle = false;
+						moveGreenCircle = false;
+						moveYellowCircle = false;
+						System.out.println(cmd + " radio button pressed!!");
+
+					}
+
+				});
+
+
+
 
 				////////// 	Arrow button functionality	//////////
 				JPanel arrowPanel = new JPanel();
@@ -145,14 +210,14 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 				// Arrow buttons to move shapes
 				BasicArrowButton xUp = new BasicArrowButton(BasicArrowButton.NORTH);
 				BasicArrowButton xDown = new BasicArrowButton(BasicArrowButton.SOUTH);
-				
+
 				////////////////////////// might not need arrow buttons///////////////////
 				//arrowPanel.add(xUp);
 				//arrowPanel.add(xDown);
 
 				// Mouse listener to allow us to move out shapes
 				// Mouse listener to get coordinates to place our shapes.
-				upperCanvas.addMouseListener(dummyInstance);
+				//upperCanvas.addMouseListener(dummyInstance);
 
 				// Partitioning window into 4 sections
 				JPanel upperRight = new JPanel();
@@ -250,19 +315,42 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 	public void display(GLAutoDrawable drawable) {
 
 		GL2 gl = drawable.getGL().getGL2();
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+		// Next 2 lines original
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT); // Original
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);					// Original
+		//////// End of original;
 
 		// Do not load identity if you want cummulative rotations
 		//gl.glLoadIdentity();            
 		//gl.glRotated(1,  0, 1, 0);    
 
-		drawSquares(gl);
+		//////////////////// Translating Shapes Here /////////////////////
+		if(animate == true)
+		{
+			// ORIGINAL CODE THAT ONLY TRANSLATED 2 SQUARES
+			//drawSquares(gl);
+			//gl.glTranslatef(translateFactor, 0f, 0f);
+			//drawSquares(gl);
+			
+			// UPDATING CODE TO TRY TO ONLY MOVE SELECTED SHAPE
+			drawSquares(gl, translateFactor);
+		}
+		else
+		{
+			drawSquares(gl);
+			drawCircles(gl);
+			drawAxes(gl);
+		}
+		//gl.glTranslated(1, 0, 0);
+		//drawSquares(gl);
+		//drawCircles(gl);
+		//drawAxes(gl);
 
-		drawCircles(gl);
-		drawAxes(gl);
+
+		System.out.println("Green square coord: " + greenSquareX + ", " + greenSquareY);
 
 		gl.glFlush();
+
 
 	}
 
@@ -278,7 +366,65 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 		float size = 0.15f;
 		//giving different colors to different sides
 		// ------------- Blue Square -------------
-		gl.glBegin(GL2.GL_QUADS); // Start Drawing The Cube
+		if(moveBlueSquare)
+		{
+			gl.glBegin(GL2.GL_QUADS); 
+			gl.glColor3f( 0f,0f,1f ); //blue color
+			// Vertices in the order top right, top left, bott left, bott right
+			gl.glVertex3f( blueSquareX + size, blueSquareY + size, blueSquareZ);
+			gl.glVertex3f( blueSquareX - size, blueSquareY + size, blueSquareZ);
+			gl.glVertex3f( blueSquareX - size, blueSquareY - size, blueSquareZ ); 
+			gl.glVertex3f( blueSquareX + size, blueSquareY - size, blueSquareZ ); 
+			gl.glEnd(); // Done Drawing The Quad
+		}
+		else
+		{
+			// ------------- Green Square -------------
+			gl.glBegin(GL2.GL_QUADS); // Start Drawing The Cube
+			gl.glColor3f( 0f,1f,0f ); //blue color
+			// Vertices in the order top right, top left, bott left, bott right
+			gl.glVertex3f( greenSquareX + size, greenSquareY + size, greenSquareZ);
+			gl.glVertex3f( greenSquareX - size, greenSquareY + size, greenSquareZ);
+			gl.glVertex3f( greenSquareX - size, greenSquareY - size, greenSquareZ ); 
+			gl.glVertex3f( greenSquareX + size, greenSquareY - size, greenSquareZ ); 
+			gl.glEnd(); // Done Drawing The Quad
+
+			// ------------- Red Square -------------
+			gl.glBegin(GL2.GL_QUADS); // Start Drawing The Cube
+			gl.glColor3f( 1f,0f,0f ); //blue color
+			// Vertices in the order top right, top left, bott left, bott right
+			gl.glVertex3f( redSquareX + size, redSquareY + size, redSquareZ);
+			gl.glVertex3f( redSquareX - size, redSquareY + size, redSquareZ);
+			gl.glVertex3f( redSquareX - size, redSquareY - size, redSquareZ ); 
+			gl.glVertex3f( redSquareX + size, redSquareY - size, redSquareZ ); 
+			gl.glEnd(); // Done Drawing The Quad
+		}
+
+
+
+	}
+
+	// t parameter is the translation factor
+	private void drawSquares(GL2 gl, float t)
+	{
+		float size = 0.15f;
+
+
+		// Updating coordinates for the shape being moved
+		if(moveBlueSquare)
+		{
+			blueSquareX = blueSquareX + t;
+		}
+		if(moveGreenSquare)
+		{
+			greenSquareX = greenSquareX + t;
+		}
+		if(moveRedSquare)
+		{
+			redSquareX = redSquareX + t;
+		}
+
+		gl.glBegin(GL2.GL_QUADS); 
 		gl.glColor3f( 0f,0f,1f ); //blue color
 		// Vertices in the order top right, top left, bott left, bott right
 		gl.glVertex3f( blueSquareX + size, blueSquareY + size, blueSquareZ);
@@ -433,6 +579,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 			// Seeing what radio button (shape) is selected
 			if (cmd.equals("Red Square"))
 			{
+				animate = true;
 				moveRedSquare = true;
 				moveGreenSquare = false;
 				moveBlueSquare = false;
@@ -445,6 +592,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 			if (cmd.equals( "Green Square"))
 			{
+				animate = true;
 				moveRedSquare = false;
 				moveGreenSquare = true;
 				moveBlueSquare = false;
@@ -458,6 +606,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 			if(cmd.equals("Blue Square"))
 			{
+				animate = true;
 				moveRedSquare = false;
 				moveGreenSquare = false;
 				moveBlueSquare = true;
@@ -470,6 +619,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 			if(cmd.equals("Red Circle"))
 			{
+				animate = true;
 				moveRedSquare = false;
 				moveGreenSquare = false;
 				moveBlueSquare = false;
@@ -482,6 +632,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 			if(cmd.equals("Blue Circle"))
 			{
+				animate = true;
 				moveRedSquare = false;
 				moveGreenSquare = false;
 				moveBlueSquare = false;
@@ -494,6 +645,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 			if(cmd.equals("Green Circle"))
 			{
+				animate = true;
 				moveRedSquare = false;
 				moveGreenSquare = false;
 				moveBlueSquare = false;
@@ -506,6 +658,7 @@ public class Quad2Animated implements GLEventListener, MouseListener {
 
 			if(cmd.equals("Yellow Circle"))
 			{
+				animate = true;
 				moveRedSquare = false;
 				moveGreenSquare = false;
 				moveBlueSquare = false;
